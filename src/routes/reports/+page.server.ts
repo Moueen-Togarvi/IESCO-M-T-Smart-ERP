@@ -1,6 +1,6 @@
 // src/routes/reports/+page.server.ts
 import { prisma } from '$lib/server/prisma';
-import { fail } from '@sveltejs/kit';
+import { fail, type RequestEvent } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -12,7 +12,7 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-    createReport: async ({ request }) => {
+    createReport: async ({ request }: RequestEvent) => {
         const formData = await request.formData();
         const type = formData.get('type') as string;
         const referenceNo = formData.get('referenceNo') as string;
@@ -22,6 +22,7 @@ export const actions: Actions = {
         const subdivision = formData.get('subdivision') as string;
         const statusOfMeter = formData.get('statusOfMeter') as string;
         const remarks = formData.get('remarks') as string;
+        const mcoNoDate = formData.get('mcoNoDate') as string || 'N/A';
 
         if (referenceNo.length !== 14) {
             return fail(400, { message: 'Reference number must be 14 digits' });
@@ -34,6 +35,7 @@ export const actions: Actions = {
                 consumerName,
                 meterNo,
                 meterMake,
+                mcoNoDate,
                 subdivision: subdivision || 'Jhelum',
                 statusOfMeter,
                 remarks,
@@ -80,6 +82,30 @@ export const actions: Actions = {
         } catch (error) {
             console.error(error);
             return fail(500, { message: 'Failed to save report' });
+        }
+    },
+    deleteReport: async ({ request }: RequestEvent) => {
+        const formData = await request.formData();
+        const id = formData.get('id') as string;
+
+        if (!id) return fail(400, { message: 'Report ID required' });
+
+        try {
+            await prisma.report.delete({ where: { id } });
+            
+            // Audit log
+            await prisma.auditLog.create({
+                data: {
+                    userId: 'cl_mock_user_123',
+                    action: 'DELETE_REPORT',
+                    target: `Report Record Deleted`
+                }
+            });
+
+            return { success: true };
+        } catch (error) {
+            console.error(error);
+            return fail(500, { message: 'Failed to delete report' });
         }
     }
 };

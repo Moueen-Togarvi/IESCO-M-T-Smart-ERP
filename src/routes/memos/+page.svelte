@@ -17,7 +17,7 @@
     let content = "";
 
     // Sequential Logic
-    $: baseNo = data.nextBaseNo;
+    $: baseNo = data.memos ? 400 + data.memos.length : 400;
     $: recipientCount = recipients.length;
     $: memoNumber = `IESCO/MT/2026/${baseNo}${recipientCount > 1 ? '-' + String(recipientCount).padStart(2, '0') : ''}`;
 
@@ -41,9 +41,11 @@
 <div class="memos-container animate-in">
     <!-- Left: Configuration Terminal -->
     <aside class="dispatch-config">
-        <form method="POST" action="?/dispatchMemo" use:enhance class="card-premium fill-form">
+        <form method="POST" action="?/createMemo" use:enhance class="card-premium fill-form">
             <input type="hidden" name="memoNo" value={memoNumber} />
-            <input type="hidden" name="recipients" value={recipients.join(', ')} />
+            <input type="hidden" name="sendTo" value={recipients.join(', ')} />
+            <input type="hidden" name="officesCount" value={recipientCount} />
+            <input type="hidden" name="documentType" value="Official Dispatch" />
 
             <div class="terminal-header">
                 <div>

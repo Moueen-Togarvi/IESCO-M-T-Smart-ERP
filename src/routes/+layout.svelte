@@ -19,7 +19,8 @@
     
     let userRole = 'Super Administrator';
     let searchQuery = "";
-    let sidebarOpen = false;
+    let sidebarOpen = false; // Mobile sidebar state
+    let desktopSidebarCollapsed = false; // Desktop sidebar state
 
     const handleSearch = (e: KeyboardEvent) => {
         if (e.key === 'Enter' && searchQuery) {
@@ -39,7 +40,7 @@
     {/if}
 
     <!-- Premium Sidebar -->
-    <aside class="sidebar {sidebarOpen ? 'open' : ''}">
+    <aside class="sidebar {sidebarOpen ? 'open' : ''} {desktopSidebarCollapsed ? 'collapsed' : ''}">
         <div class="sidebar-header">
             <div class="logo-container">
                 <div class="logo-badge">
@@ -63,7 +64,7 @@
                         <div class="icon-wrapper">
                             <svelte:component this={item.icon} size={18} />
                         </div>
-                        <span>{item.label}</span>
+                        <span class="link-text">{item.label}</span>
                     </a>
                 {/each}
             </div>
@@ -90,9 +91,16 @@
         <!-- Premium Top Bar -->
         <header class="top-bar">
             <div class="flex items-center gap-3">
+                <!-- Mobile Menu Button -->
                 <button class="mobile-menu-btn" on:click={() => sidebarOpen = true}>
                     <Menu size={24} />
                 </button>
+                
+                <!-- Desktop Sidebar Toggle -->
+                <button class="desktop-menu-btn" on:click={() => desktopSidebarCollapsed = !desktopSidebarCollapsed}>
+                    <Menu size={20} />
+                </button>
+
                 <div class="search-bar">
                 <Search size={16} class="search-icon" />
                 <input 
@@ -178,6 +186,7 @@
         line-height: 1;
         margin-bottom: 0.25rem;
         color: white;
+        transition: opacity 0.3s;
     }
 
     .brand-title span {
@@ -190,6 +199,7 @@
         text-transform: uppercase;
         letter-spacing: 0.1em;
         color: #94a3b8;
+        transition: opacity 0.3s;
     }
 
     .sidebar-nav {
@@ -277,6 +287,7 @@
     .user-info {
         flex: 1;
         min-width: 0;
+        transition: opacity 0.3s;
     }
 
     .user-name {
@@ -304,6 +315,55 @@
 
     .logout-btn:hover {
         color: var(--error);
+    }
+
+    /* Desktop Collapsed State Styles */
+    .sidebar {
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.collapsed {
+        width: 80px;
+    }
+
+    .sidebar.collapsed .logo-text,
+    .sidebar.collapsed .nav-label,
+    .sidebar.collapsed .link-text,
+    .sidebar.collapsed .user-info {
+        opacity: 0;
+        width: 0;
+        display: none;
+    }
+
+    .sidebar.collapsed .logo-container {
+        justify-content: center;
+    }
+
+    .sidebar.collapsed .sidebar-header {
+        padding: 2.5rem 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .sidebar.collapsed .sidebar-link {
+        justify-content: center;
+        padding: 0.875rem 0;
+    }
+
+    .sidebar.collapsed .icon-wrapper {
+        margin: 0;
+    }
+
+    .sidebar.collapsed .user-profile {
+        padding: 0.75rem 0;
+        justify-content: center;
+        flex-direction: column;
+        gap: 1rem;
+        background: transparent;
+    }
+
+    .sidebar.collapsed .logout-btn {
+        margin-top: 0.5rem;
     }
 
     /* Content Area Layout */
@@ -424,6 +484,24 @@
         z-index: 45;
     }
 
+    .desktop-menu-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .desktop-menu-btn:hover {
+        background: var(--bg-main);
+        color: var(--brand-primary);
+    }
+
     /* Responsive Adjustments */
     @media (max-width: 1024px) {
         .sidebar {
@@ -432,6 +510,24 @@
             top: 0;
             bottom: 0;
             transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 280px; /* Force width on mobile */
+        }
+        
+        .sidebar.collapsed {
+            width: 280px; /* Ignore collapsed state on mobile */
+        }
+        
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .nav-label,
+        .sidebar.collapsed .link-text,
+        .sidebar.collapsed .user-info {
+            display: block;
+            opacity: 1;
+            width: auto;
+        }
+
+        .desktop-menu-btn {
+            display: none; /* Hide desktop toggle on mobile */
         }
         
         .sidebar.open {

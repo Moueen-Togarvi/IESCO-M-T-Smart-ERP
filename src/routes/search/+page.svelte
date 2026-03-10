@@ -27,7 +27,7 @@
         </div>
     </header>
 
-    {#if data.reports.length === 0}
+    {#if data.results.length === 0}
         <div class="empty-state card-premium shadow-glow">
             <div class="icon-orb">
                 <Search size={40} />
@@ -53,7 +53,7 @@
         </div>
     {:else}
         <div class="results-stack">
-            {#each data.reports as r, i}
+            {#each data.results as r, i}
                 <div class="result-card card-premium animate-in" style="animation-delay: {i * 0.1}s">
                     <div class="card-inner">
                         <!-- Identity Sector -->
@@ -302,7 +302,7 @@
     .status-pill.healthy { background: #dcfce7; color: #166534; }
     .status-pill.critical { background: #fee2e2; color: #991b1b; }
 
-    .sector-footer { margin-top: 3rem; pt: 2rem; border-top: 1px solid var(--border-light); }
+    .sector-footer { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-light); }
     .portal-link {
         display: flex;
         align-items: center;
@@ -368,7 +368,7 @@
 
     .remarks-box p { font-size: 0.9375rem; font-weight: 600; color: var(--text-secondary); line-height: 1.6; font-style: italic; }
 
-    .stats-mini { display: flex; gap: 3rem; margin-top: 1.5rem; pt: 1rem; border-top: 1px solid #e2e8f0; }
+    .stats-mini { display: flex; gap: 3rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e2e8f0; }
     .stat { display: flex; flex-direction: column; gap: 0.25rem; }
     .stat span { font-size: 0.65rem; font-weight: 900; text-transform: uppercase; color: var(--text-tertiary); }
     .stat strong { font-size: 0.8125rem; font-weight: 800; color: var(--text-primary); }
