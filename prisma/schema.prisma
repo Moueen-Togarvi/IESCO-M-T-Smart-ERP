@@ -1,0 +1,78 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  username       String    @unique
+  role           String    @default("OPERATOR") // ADMIN, OPERATOR
+  sessions       Session[]
+  activityLogs   AuditLog[]
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+model Report {
+  id               String   @id @default(cuid())
+  subdivision      String
+  referenceNo      String   // 14 digits
+  consumerName     String
+  meterNo          String
+  meterMake        String
+  mcoNoDate        String
+  type             String   @default("SINGLE_PHASE") // SINGLE_PHASE, THREE_PHASE
+  
+  // Readings (Single Phase)
+  readingBill      Float?
+  readingMeter     Float?
+  
+  // Readings (3 Phase)
+  peakBill         Float?
+  offPeakBill      Float?
+  peakMeter        Float?
+  offPeakMeter     Float?
+  
+  // Status
+  statusOfMeter    String   // Slow, Burnt, Theft, etc.
+  remarks          String?
+  aiRemarks        String?  // Hidden AI suggested remarks
+  isAiFlagged      Boolean  @default(false)
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  operatorId       String
+}
+
+model Memo {
+  id             String   @id @default(cuid())
+  memoNo         String   @unique
+  date           DateTime @default(now())
+  sendTo         String   // JSON or comma-separated list of offices
+  subject        String
+  documentType   String
+  content        String   @db.Text
+  signatureUrl   String?
+  createdAt      DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  target    String
+  timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
