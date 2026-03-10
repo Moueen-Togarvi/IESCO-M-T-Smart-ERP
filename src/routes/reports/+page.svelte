@@ -341,13 +341,14 @@
                             <td class="text-right">
                                 <div class="action-btns">
                                     <button class="row-btn" title="View Detail"><Eye size={16} /></button>
-                                    <button class="row-btn" title="Download Audit"><Download size={16} /></button>
+                                    <button class="row-btn" title="Edit Record"><Pencil size={16} /></button>
                                     <form method="POST" action="?/deleteReport" use:enhance class="inline-form">
                                         <input type="hidden" name="id" value={r.id} />
                                         <button type="submit" class="row-btn delete-btn" title="Delete Record">
                                             <Trash2 size={16} />
                                         </button>
                                     </form>
+                                    <button class="row-btn" title="Download Audit"><Download size={16} /></button>
                                 </div>
                             </td>
                         </tr>
@@ -370,27 +371,28 @@
 <style>
     .reports-container {
         display: flex;
-        gap: 2.5rem;
-        height: calc(100vh - 160px);
+        gap: 1.5rem;
+        align-items: stretch;
+        height: calc(100vh - 120px);
     }
 
     /* Entry Console Styles */
     .entry-console {
-        width: 380px;
+        width: 320px;
         flex-shrink: 0;
         display: flex;
         flex-direction: column;
     }
 
     .entry-form {
-        height: 100%;
+        flex: 1;
         display: flex;
         flex-direction: column;
         overflow: hidden;
     }
 
     .form-header {
-        padding: 1rem 1.5rem;
+        padding: 0.75rem 1rem;
         border-bottom: 1px solid var(--border-light);
     }
 
@@ -415,14 +417,14 @@
         background: var(--bg-main);
         padding: 0.25rem;
         border-radius: 10px;
-        margin-top: 0.75rem;
+        margin-top: 0.5rem;
     }
 
     .type-selector button {
         flex: 1;
         border: none;
         background: transparent;
-        padding: 0.375rem 0.5rem;
+        padding: 0.25rem 0.5rem;
         border-radius: 8px;
         font-size: 0.65rem;
         font-weight: 800;
@@ -441,16 +443,16 @@
     .form-scrollable {
         flex: 1;
         overflow-y: auto;
-        padding: 1rem 1.5rem;
+        padding: 0.5rem 0.75rem;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.5rem;
     }
 
     .field-group {
         display: flex;
         flex-direction: column;
-        gap: 0.375rem;
+        gap: 0.25rem;
     }
 
     .field-group label {
@@ -506,8 +508,8 @@
     .dropzone-label {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        padding: 1rem;
+        gap: 0.75rem;
+        padding: 0.75rem;
         cursor: pointer;
         color: var(--text-tertiary);
     }
@@ -539,7 +541,7 @@
 
     /* Calculation Cards */
     .calculation-summary {
-        padding: 0.75rem 1rem;
+        padding: 0.5rem 0.75rem;
         border-radius: 12px;
         display: flex;
         justify-content: space-between;
@@ -558,7 +560,7 @@
         background: #fdfaff;
         border: 1px solid #f3e8ff;
         border-radius: 16px;
-        padding: 1rem 1.25rem;
+        padding: 0.75rem 1rem;
     }
 
     .ai-header {
@@ -712,15 +714,16 @@
     }
 
     .table-container {
-        flex: 1;
         display: flex;
         flex-direction: column;
-        overflow: hidden;
+        overflow-x: auto;
+        flex: 1;
     }
 
     .registry-table {
         width: 100%;
         border-collapse: collapse;
+        min-width: 650px; /* Reduced min-width to prevent overflow */
     }
 
     .registry-table th {
@@ -744,7 +747,7 @@
     }
 
     .table-row td {
-        padding: 1.25rem 1.5rem;
+        padding: 0.75rem 1rem;
         vertical-align: middle;
     }
 
@@ -889,7 +892,7 @@
     }
 
     .form-footer {
-        padding: 1rem 1.5rem;
+        padding: 0.75rem 1rem;
         border-top: 1px solid var(--border-light);
     }
 
