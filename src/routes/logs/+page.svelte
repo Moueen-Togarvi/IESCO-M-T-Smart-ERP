@@ -2,98 +2,111 @@
     import { 
         History, User, Activity, Clock, 
         AlertCircle, FileText, Search, Filter,
-        UserCircle2, ExternalLink, ChevronLeft, ChevronRight, RefreshCw
+        UserCircle2, ExternalLink, ChevronLeft, ChevronRight, RefreshCw,
+        ShieldCheck, Database, Zap, Download
     } from 'lucide-svelte';
+    import type { PageData } from './$types';
 
-    const logs = [
-        { id: 1, user: 'moueen_admin', role: 'Super Admin', action: 'Login', target: 'System Console', time: '2 mins ago', status: 'Healthy' },
-        { id: 2, user: 'operator_01', role: 'Operator', action: 'Create Report', target: 'Ref: 14212398', time: '15 mins ago', status: 'Healthy' },
-        { id: 3, user: 'operator_02', role: 'Operator', action: 'Print Memo', target: 'IESCO/MT/0842', time: '1 hr ago', status: 'Healthy' },
-        { id: 4, user: 'moueen_admin', role: 'Super Admin', action: 'Delete Report', target: 'Ref: 1499... ', time: '3 hrs ago', status: 'Low Consumption' },
-        { id: 5, user: 'operator_01', role: 'Operator', action: 'Failed Login', target: 'IP: 192.168.1.1', time: '5 hrs ago', status: 'Faulty' },
-    ];
+    export let data: PageData;
 </script>
 
-<div class="space-y-8 animate-in">
-    <header class="flex items-center justify-between">
-        <div class="space-y-1">
-            <h2 class="text-2xl font-black text-main tracking-tight">System Audit logs</h2>
-            <p class="text-xs font-bold text-muted uppercase tracking-widest flex items-center gap-2">
-                <span class="status-dot"></span>
-                Immutable Transaction Log
-            </p>
+<div class="logs-container animate-in">
+    <header class="page-header">
+        <div class="header-main">
+            <h2 class="view-title">Audit Trail</h2>
+            <div class="status-brief">
+                <span class="pulse-indicator"></span>
+                <span>Immutable Ledger Active</span>
+            </div>
         </div>
-        <div class="flex items-center gap-3">
-            <button class="btn-secondary">
-                <History size={16} />
-                History
-            </button>
+        <div class="header-actions">
+            <div class="stat-pill">
+                <Database size={14} />
+                <span>{data.logs.length} Recent Events</span>
+            </div>
             <button class="btn-primary">
-                Download Audit
+                <Download size={16} />
+                Export Forensic Log
             </button>
         </div>
     </header>
 
-    <!-- Search & Filter Bar -->
-    <div class="search-filter-bar">
-        <div class="search-input-wrapper">
-            <Search size={16} class="search-icon-fixed" />
-            <input 
-                type="text" 
-                placeholder="Search by user, action or target..." 
-                class="filter-input"
-            />
+    <div class="filter-bar card-premium">
+        <div class="search-field">
+            <Search size={18} class="search-icon" />
+            <input type="text" placeholder="Trace user, action, or target resource..." />
         </div>
-        <div class="filter-actions">
-            <select class="select-mini"><option>All Users</option></select>
-            <select class="select-mini"><option>All Events</option></select>
-            <button class="icon-btn-border"><RefreshCw size={16} /></button>
+        <div class="filter-group">
+            <div class="select-wrapper">
+                <select>
+                    <option>All Security Levels</option>
+                    <option>Critical Only</option>
+                </select>
+            </div>
+            <div class="v-separator"></div>
+            <button class="refresh-btn">
+                <RefreshCw size={16} />
+            </button>
         </div>
     </div>
 
-    <!-- Table Card -->
-    <div class="table-card">
-        <table class="premium-table">
+    <div class="table-viewport card-premium">
+        <table class="audit-table">
             <thead>
                 <tr>
-                    <th>User Details</th>
-                    <th>Action</th>
+                    <th>Operator</th>
+                    <th>Intelligence Action</th>
                     <th>Target Resource</th>
                     <th>Timestamp</th>
-                    <th>System Health</th>
-                    <th class="text-right">Trace</th>
+                    <th>Security Signature</th>
+                    <th class="text-right">Details</th>
                 </tr>
             </thead>
             <tbody>
-                {#each logs as l}
-                    <tr>
+                {#each data.logs as log, i}
+                    <tr class="audit-row animate-in" style="animation-delay: {i * 0.03}s">
                         <td>
-                            <div class="user-cell">
-                                <div class="user-avatar-small">
-                                    <User size={18} />
+                            <div class="operator-cell">
+                                <div class="operator-avatar">
+                                    {log.user.username.substring(0, 2).toUpperCase()}
                                 </div>
-                                <div>
-                                    <p class="user-name">{l.user}</p>
-                                    <p class="user-role">{l.role}</p>
+                                <div class="operator-info">
+                                    <p class="username">@{log.user.username}</p>
+                                    <p class="role">{log.user.role}</p>
                                 </div>
                             </div>
                         </td>
                         <td>
-                            <span class="action-badge">
-                                {l.action}
-                            </span>
+                            <div class="action-cell">
+                                <div class="action-orb" class:create={log.action.includes('CREATE')} class:delete={log.action.includes('DELETE')}>
+                                    {#if log.action.includes('CREATE')}
+                                        <Zap size={14} />
+                                    {:else if log.action.includes('DELETE')}
+                                        <AlertCircle size={14} />
+                                    {:else}
+                                        <Activity size={14} />
+                                    {/if}
+                                </div>
+                                <span class="action-text">{log.action.replace(/_/g, ' ')}</span>
+                            </div>
                         </td>
                         <td>
-                            <p class="target-mono">{l.target}</p>
+                            <span class="target-tag">{log.target}</span>
                         </td>
-                        <td><span class="time-text">{l.time}</span></td>
                         <td>
-                            <span class="status-badge {l.status === 'Healthy' ? 'status-success' : l.status.includes('Low') ? 'status-warning' : 'status-error'}">
-                                {l.status}
-                            </span>
+                            <div class="time-cell">
+                                <p class="date">{new Date(log.timestamp).toLocaleDateString()}</p>
+                                <p class="time">{new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="signature-cell">
+                                <ShieldCheck size={14} class="text-success" />
+                                <span>Verified</span>
+                            </div>
                         </td>
                         <td class="text-right">
-                            <button class="action-icon hover:text-primary">
+                            <button class="btn-icon-sm">
                                 <ExternalLink size={16} />
                             </button>
                         </td>
@@ -102,57 +115,293 @@
             </tbody>
         </table>
 
-        <footer class="table-footer">
-            <span>Audit integrity verified by Neon DB</span>
-            <div class="pagination">
-                <button class="page-btn"><ChevronLeft size={16} /></button>
-                <button class="page-btn active">1</button>
-                <div class="page-spacer">...</div>
-                <button class="page-btn">842</button>
-                <button class="page-btn"><ChevronRight size={16} /></button>
+        <footer class="table-pagination">
+            <p class="integrity-note">
+                <ShieldCheck size={14} />
+                Log integrity protected by cryptographic hashing
+            </p>
+            <div class="pagination-controls">
+                <button class="nav-btn"><ChevronLeft size={16} /></button>
+                <div class="page-list">
+                    <button class="page-num active">1</button>
+                    <button class="page-num">2</button>
+                    <button class="page-num">3</button>
+                </div>
+                <button class="nav-btn"><ChevronRight size={16} /></button>
             </div>
         </footer>
     </div>
 </div>
 
 <style>
-    .space-y-8 > * + * { margin-top: 2rem; }
-    .space-y-1 > * + * { margin-top: 0.25rem; }
-    
-    .status-dot { width: 0.4rem; height: 0.4rem; background: #10b981; border-radius: 50%; }
-    
-    .search-filter-bar { background: white; padding: 1rem; border-radius: 1rem; border: 1px solid var(--border-base); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; box-shadow: var(--shadow-sm); }
-    .search-input-wrapper { position: relative; flex: 1; }
-    .search-icon-fixed { position: absolute; left: 0.875rem; top: 50%; transform: translateY(-50%); color: var(--text-subtle); pointer-events: none; }
-    .filter-input { width: 100%; border: none; background: #f3f4f6b0; padding: 0.625rem 1rem 0.625rem 2.5rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 500; }
-    .filter-input:focus { background: white; box-shadow: 0 0 0 4px var(--primary-light); }
-    
-    .filter-actions { display: flex; align-items: center; gap: 0.5rem; }
-    .select-mini { width: auto; font-size: 0.7rem; font-weight: 800; padding: 0.375rem 0.75rem; text-transform: uppercase; border-radius: 0.75rem; }
-    .icon-btn-border { background: transparent; border: 1px solid var(--border-base); padding: 0.5rem; border-radius: 0.75rem; color: var(--text-subtle); cursor: pointer; display: flex; transition: all 0.2s; }
-    .icon-btn-border:hover { background: #f9fafb; color: var(--text-main); }
+    .logs-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+    }
 
-    .table-card { background: white; border: 1px solid var(--border-base); border-radius: 1rem; box-shadow: var(--shadow-sm); overflow: hidden; }
-    .premium-table { width: 100%; border-collapse: collapse; text-align: left; }
-    .premium-table th { background: #f9fafb; padding: 1rem 1.5rem; font-size: 0.65rem; font-weight: 900; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid var(--border-light); }
-    .premium-table td { padding: 1.25rem 1.5rem; font-size: 0.875rem; border-bottom: 1px solid #f9fafb; }
-    .premium-table tr:hover { background: #fcfdfe; }
-    
-    .user-cell { display: flex; align-items: center; gap: 1rem; }
-    .user-avatar-small { width: 2.25rem; height: 2.25rem; background: #eff6ff; color: var(--primary); border: 1px solid #dbeafe; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; }
-    .user-name { font-weight: 900; color: var(--text-main); letter-spacing: -0.025em; margin-bottom: 0.125rem; line-height: 1; }
-    .user-role { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-    
-    .action-badge { padding: 0.25rem 0.5rem; background: #f3f4f6; color: #4b5563; border-radius: 0.5rem; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid var(--border-light); }
-    .target-mono { font-family: 'Inter', monospace; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-    .time-text { font-size: 0.75rem; font-weight: 600; color: var(--text-subtle); }
-    
-    .action-icon { background: none; border: none; padding: 0.25rem; cursor: pointer; color: var(--text-subtle); transition: color 0.2s; display: flex; }
-    
-    .table-footer { padding: 1.25rem 2rem; border-top: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; font-size: 0.7rem; font-weight: 700; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.05em; }
-    .pagination { display: flex; align-items: center; gap: 0.5rem; }
-    .page-btn { width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; border: 1px solid var(--border-base); background: white; color: var(--text-subtle); cursor: pointer; transition: all 0.2s; }
-    .page-btn:hover { background: #f9fafb; color: var(--text-main); }
-    .page-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
-    .page-spacer { color: #d1d5db; padding: 0 0.25rem; }
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .view-title {
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: var(--text-primary);
+    }
+
+    .status-brief {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        margin-top: 0.5rem;
+    }
+
+    .pulse-indicator {
+        width: 8px;
+        height: 8px;
+        background: var(--brand-primary);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .stat-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1rem;
+        background: white;
+        border: 1px solid var(--border-subtle);
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+    }
+
+    .filter-bar {
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .search-field {
+        position: relative;
+        flex: 1;
+        max-width: 500px;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-tertiary);
+    }
+
+    .search-field input {
+        border: none;
+        background: transparent;
+        padding-left: 2rem;
+        width: 100%;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .select-wrapper select {
+        background: transparent;
+        border: none;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        cursor: pointer;
+    }
+
+    .v-separator { width: 1px; height: 24px; background: var(--border-light); }
+
+    .refresh-btn {
+        background: none;
+        border: none;
+        color: var(--text-tertiary);
+        cursor: pointer;
+        transition: transform 0.3s;
+    }
+
+    .refresh-btn:hover { transform: rotate(180deg); color: var(--brand-primary); }
+
+    .table-viewport {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .audit-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .audit-table th {
+        text-align: left;
+        padding: 1.25rem 1.75rem;
+        font-size: 0.65rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-tertiary);
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .audit-row {
+        border-bottom: 1px solid var(--border-light);
+        transition: background 0.2s;
+    }
+
+    .audit-row:hover { background: #fbfcfe; }
+
+    .audit-row td { padding: 1.25rem 1.75rem; vertical-align: middle; }
+
+    .operator-cell { display: flex; align-items: center; gap: 1rem; }
+    .operator-avatar {
+        width: 36px;
+        height: 36px;
+        background: var(--bg-main);
+        border: 1px solid var(--border-subtle);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: var(--brand-primary);
+    }
+
+    .username { font-size: 0.8125rem; font-weight: 800; color: var(--text-primary); }
+    .role { font-size: 0.65rem; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; }
+
+    .action-cell { display: flex; align-items: center; gap: 0.75rem; }
+    .action-orb {
+        width: 32px;
+        height: 32px;
+        background: #f1f5f9;
+        color: #64748b;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .action-orb.create { background: #f0fdf4; color: #166534; }
+    .action-orb.delete { background: #fef2f2; color: #991b1b; }
+
+    .action-text { font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); text-transform: capitalize; }
+
+    .target-tag {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.7rem;
+        font-weight: 700;
+        background: var(--bg-main);
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        color: var(--text-tertiary);
+        border: 1px solid var(--border-subtle);
+    }
+
+    .time-cell .date { font-size: 0.8125rem; font-weight: 700; color: var(--text-secondary); }
+    .time-cell .time { font-size: 0.65rem; font-weight: 600; color: var(--text-tertiary); }
+
+    .signature-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--success);
+    }
+
+    .btn-icon-sm {
+        width: 32px;
+        height: 32px;
+        background: var(--bg-main);
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        color: var(--text-tertiary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-icon-sm:hover { background: white; color: var(--brand-primary); border-color: var(--brand-primary); }
+
+    .table-pagination {
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fcfdfe;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .integrity-note {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .pagination-controls { display: flex; align-items: center; gap: 1rem; }
+    .page-list { display: flex; gap: 0.5rem; }
+    .page-num {
+        width: 32px;
+        height: 32px;
+        border: 1px solid var(--border-subtle);
+        background: white;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+    .page-num.active { background: var(--brand-primary); color: white; border-color: var(--brand-primary); }
+
+    .nav-btn {
+        width: 32px;
+        height: 32px;
+        background: white;
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+        70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
 </style>

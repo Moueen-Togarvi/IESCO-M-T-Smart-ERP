@@ -1,124 +1,178 @@
 <script lang="ts">
     import { 
         User, Shield, Signature, Upload, Save, 
-        Trash2, CheckCircle, Bell, Globe, Key 
+        Trash2, CheckCircle, Bell, Globe, Key,
+        LogOut, MoreVertical, ChevronRight, Zap
     } from 'lucide-svelte';
     import { enhance } from '$app/forms';
 
     let userName = "Moueen Togarvi";
     let userRole = "Admin Staff";
-    let signatureUploaded = false;
+    let signatureUploaded = true;
 </script>
 
-<div class="w-full space-y-8 animate-in">
-    <header class="flex items-center justify-between">
-        <div class="space-y-1">
-            <h2 class="text-2xl font-black text-main tracking-tight">System Settings</h2>
-            <p class="text-xs font-bold text-muted uppercase tracking-widest">Manage your identity and preferences</p>
+<div class="settings-container animate-in">
+    <header class="settings-header">
+        <div class="header-main">
+            <h2 class="view-title">System Architecture</h2>
+            <p class="view-subtitle">User Preference & Identity Configuration</p>
         </div>
-        <button class="btn-primary">
-            <Save size={16} />
-            Save Changes
-        </button>
+        <div class="header-actions">
+            <button class="btn-primary shadow-glow">
+                <Save size={18} />
+                Synchronize Changes
+            </button>
+        </div>
     </header>
 
-    <div class="grid grid-cols-3 gap-8">
-        <!-- Sidebar Navigation -->
-        <aside class="col-span-1 space-y-2">
-            <button class="settings-nav-btn active">
-                <User size={18} />
-                <span>Profile Details</span>
-            </button>
-            <button class="settings-nav-btn">
-                <Shield size={18} />
-                <span>Security</span>
-            </button>
-            <button class="settings-nav-btn">
-                <Bell size={18} />
-                <span>Notifications</span>
-            </button>
-            <button class="settings-nav-btn">
-                <Globe size={18} />
-                <span>Regional Settings</span>
-            </button>
+    <div class="settings-grid">
+        <!-- Vertical Navigation -->
+        <aside class="settings-sidebar">
+            <div class="nav-group">
+                <p class="group-label">Personalization</p>
+                <button class="nav-item active">
+                    <User size={18} />
+                    <span>User Profile</span>
+                    <ChevronRight size={14} class="ml-auto" />
+                </button>
+                <button class="nav-item">
+                    <Signature size={18} />
+                    <span>Digital Identity</span>
+                    <ChevronRight size={14} class="ml-auto" />
+                </button>
+            </div>
+
+            <div class="nav-group">
+                <p class="group-label">Infrastructure</p>
+                <button class="nav-item">
+                    <Shield size={18} />
+                    <span>Security Protocol</span>
+                    <ChevronRight size={14} class="ml-auto" />
+                </button>
+                <button class="nav-item">
+                    <Bell size={18} />
+                    <span>Alert Hub</span>
+                    <ChevronRight size={14} class="ml-auto" />
+                </button>
+                <button class="nav-item">
+                    <Globe size={18} />
+                    <span>Regional Logic</span>
+                    <ChevronRight size={14} class="ml-auto" />
+                </button>
+            </div>
+
+            <div class="nav-footer">
+                <button class="logout-btn">
+                    <LogOut size={18} />
+                    <span>Terminate Session</span>
+                </button>
+            </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="col-span-2 space-y-6">
-            <!-- Account Info -->
-            <section class="card-premium p-8">
-                <h3 class="text-xs font-black text-main uppercase tracking-widest mb-6">Account Information</h3>
-                <div class="space-y-5">
-                    <div class="form-group">
-                        <label class="label-tiny">Full Name</label>
-                        <input type="text" bind:value={userName} class="font-bold" />
+        <!-- Dynamic Content Engine -->
+        <main class="settings-content">
+            <!-- Profile Section -->
+            <section class="settings-section card-premium">
+                <div class="section-header">
+                    <div class="icon-orb">
+                        <User size={20} />
                     </div>
-                    <div class="form-group">
-                        <label class="label-tiny">Role / Designation</label>
-                        <div class="badge-display">
-                            <Shield size={14} class="text-primary" />
-                            <span>{userRole}</span>
+                    <div class="header-text">
+                        <h3>Identity Credentials</h3>
+                        <p>Core account synchronization data</p>
+                    </div>
+                </div>
+
+                <div class="section-body">
+                    <div class="input-grid">
+                        <div class="field-entry">
+                            <label>Official Display Name</label>
+                            <input type="text" bind:value={userName} placeholder="Full legal name..." />
+                        </div>
+                        <div class="field-entry">
+                            <label>Designated Role</label>
+                            <div class="role-badge shadow-sm">
+                                <Shield size={14} />
+                                <span>{userRole}</span>
+                            </div>
+                            <p class="helper-text">Roles are assigned by System Administrator</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Digital Signature Section -->
-            <section class="card-premium p-8 border-primary-light bg-blue-fade">
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-3">
-                        <Signature size={20} class="text-primary" />
-                        <h3 class="text-xs font-black text-main uppercase tracking-widest">Digital Signature</h3>
+            <!-- Digital Signature Engine -->
+            <section class="settings-section card-premium highlight">
+                <div class="section-header">
+                    <div class="icon-orb primary">
+                        <Signature size={20} />
+                    </div>
+                    <div class="header-text">
+                        <h3>Biometric Transit</h3>
+                        <p>Signature embedding for official documents</p>
                     </div>
                     {#if signatureUploaded}
-                        <div class="flex items-center gap-1.5 text-success font-black text-[10px] uppercase tracking-widest">
-                            <CheckCircle size={14} />
+                        <div class="status-chip success">
+                            <Zap size={12} />
                             Verified
                         </div>
                     {/if}
                 </div>
 
-                <p class="text-xs font-medium text-muted mb-6 leading-relaxed">
-                    Upload your official signature image (PNG/JPG). This will be automatically embedded in all generated Memos and Reports.
-                </p>
-
-                <div class="signature-upload-zone {signatureUploaded ? 'has-signature' : ''}">
-                    {#if !signatureUploaded}
-                        <div class="flex flex-col items-center gap-3">
-                            <div class="upload-icon-box">
-                                <Upload size={24} />
+                <div class="section-body">
+                    <div class="upload-facade" class:active={signatureUploaded}>
+                        {#if !signatureUploaded}
+                            <div class="empty-state">
+                                <div class="upload-circle">
+                                    <Upload size={32} />
+                                </div>
+                                <div class="text-center">
+                                    <h4>Deploy Signature File</h4>
+                                    <p>High-resolution PNG (Alpha) recommended</p>
+                                </div>
+                                <button class="btn-secondary" on:click={() => signatureUploaded = true}>Select Asset</button>
                             </div>
-                            <div class="text-center">
-                                <p class="text-[11px] font-black text-main uppercase tracking-widest mb-1">Upload Signature</p>
-                                <p class="text-[10px] font-bold text-muted">PNG with transparent background preferred</p>
+                        {:else}
+                            <div class="asset-display">
+                                <div class="preview-box">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Signature_of_Barack_Obama.svg" alt="Auth Signature" />
+                                </div>
+                                <div class="asset-info">
+                                    <h5>Primary_Signature_V1.png</h5>
+                                    <p>Size: 42 KB • Format: PNG (Transparent)</p>
+                                    <div class="asset-actions">
+                                        <button class="text-btn danger" on:click={() => signatureUploaded = false}>
+                                            <Trash2 size={16} />
+                                            Re-Deploy
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <button class="btn-secondary mt-2" on:click={() => signatureUploaded = true}>Choose File</button>
-                        </div>
-                    {:else}
-                        <div class="flex items-center justify-between w-full">
-                            <div class="signature-preview">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Signature_of_Barack_Obama.svg" alt="Signature" class="h-12 opacity-80" />
-                            </div>
-                            <button class="action-icon text-error hover:bg-error-bg p-2 rounded-lg transition-all" on:click={() => signatureUploaded = false}>
-                                <Trash2 size={20} />
-                            </button>
-                        </div>
-                    {/if}
+                        {/if}
+                    </div>
                 </div>
             </section>
 
-            <!-- Password Change -->
-            <section class="card-premium p-8">
-                <div class="flex items-center gap-3 mb-6">
-                    <Key size={20} class="text-subtle" />
-                    <h3 class="text-xs font-black text-main uppercase tracking-widest">Authentication</h3>
-                </div>
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-[11px] font-black text-main uppercase tracking-widest mb-1">Reset Password</p>
-                        <p class="text-[10px] font-bold text-muted">A secure reset link will be sent to your official email.</p>
+            <!-- Authentication Layer -->
+            <section class="settings-section card-premium">
+                <div class="section-header">
+                    <div class="icon-orb danger">
+                        <Key size={20} />
                     </div>
-                    <button class="btn-secondary">Send Link</button>
+                    <div class="header-text">
+                        <h3>Security Vault</h3>
+                        <p>Access control and key rotation</p>
+                    </div>
+                </div>
+
+                <div class="section-body">
+                    <div class="auth-box shadow-sm">
+                        <div class="auth-info">
+                            <h4>Renew Session Key</h4>
+                            <p>A one-time synchronization link will be dispatched to your system registry email.</p>
+                        </div>
+                        <button class="btn-secondary">Request Rotation</button>
+                    </div>
                 </div>
             </section>
         </main>
@@ -126,21 +180,246 @@
 </div>
 
 <style>
-    .settings-nav-btn { width: 100%; display: flex; align-items: center; gap: 0.875rem; padding: 0.875rem 1rem; border: none; background: transparent; border-radius: 0.75rem; color: var(--text-muted); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-    .settings-nav-btn:hover { background: #f3f4f6; color: var(--text-main); }
-    .settings-nav-btn.active { background: white; color: var(--primary); box-shadow: var(--shadow-sm); border: 1px solid var(--border-base); }
-    
-    .badge-display { display: flex; align-items: center; gap: 0.5rem; background: #f3f4f6; padding: 0.625rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-base); font-size: 0.8rem; font-weight: 700; color: #4b5563; width: fit-content; }
-    
-    .border-primary-light { border-color: #dbeafe; }
-    .bg-blue-fade { background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%); }
-    
-    .signature-upload-zone { border: 2px dashed #d1d5db; border-radius: 1rem; padding: 2.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.2s; background: white; }
-    .signature-upload-zone.has-signature { border-style: solid; border-color: #dbeafe; padding: 1.5rem; }
-    .upload-icon-box { width: 3rem; height: 3rem; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-subtle); }
-    
-    .text-success { color: #10b981; }
-    .error-bg { background-color: #fef2f2; }
-    
-    .signature-preview { padding: 1rem; background: white; border-radius: 0.75rem; border: 1px solid #f3f4f6; }
+    .settings-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+    }
+
+    .settings-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .view-title {
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: var(--text-primary);
+    }
+
+    .view-subtitle {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+        margin-top: 0.5rem;
+    }
+
+    .settings-grid {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 3rem;
+        align-items: start;
+    }
+
+    /* Sidebar Navigation Styles */
+    .settings-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+        position: sticky;
+        top: 2rem;
+    }
+
+    .group-label {
+        font-size: 0.7rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-tertiary);
+        margin-bottom: 1rem;
+        padding-left: 1rem;
+    }
+
+    .nav-group { display: flex; flex-direction: column; gap: 0.25rem; }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.875rem 1rem;
+        background: transparent;
+        border: none;
+        border-radius: 12px;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .nav-item:hover { background: #f1f5f9; color: var(--text-primary); }
+    .nav-item.active { background: white; color: var(--brand-primary); box-shadow: var(--shadow-sm); border: 1px solid var(--border-subtle); }
+
+    .nav-footer { margin-top: 1rem; padding-top: 2rem; border-top: 1px solid var(--border-light); }
+
+    .logout-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.875rem 1rem;
+        background: #fef2f2;
+        border: 1px solid #fee2e2;
+        border-radius: 12px;
+        color: #ef4444;
+        font-size: 0.875rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .logout-btn:hover { background: #fee2e2; border-color: #fecaca; }
+
+    /* Content Engine Styles */
+    .settings-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .settings-section {
+        padding: 2.5rem;
+        overflow: hidden;
+    }
+
+    .settings-section.highlight {
+        background: linear-gradient(135deg, white 0%, #f0f7ff 100%);
+        border-color: #dbeafe;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .icon-orb {
+        width: 48px;
+        height: 48px;
+        background: #f1f5f9;
+        color: #64748b;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .icon-orb.primary { background: #eff6ff; color: var(--brand-primary); }
+    .icon-orb.danger { background: #fef2f2; color: #ef4444; }
+
+    .header-text h3 { font-size: 1.125rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.01em; }
+    .header-text p { font-size: 0.875rem; font-weight: 600; color: var(--text-tertiary); }
+
+    .status-chip {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.35rem 0.875rem;
+        border-radius: 20px;
+        font-size: 0.65rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .status-chip.success { background: #dcfce7; color: #166534; }
+
+    .section-body { position: relative; }
+
+    .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .field-entry { display: flex; flex-direction: column; gap: 0.625rem; }
+    .field-entry label { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; color: var(--text-tertiary); letter-spacing: 0.05em; }
+
+    .role-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: #f8fafc;
+        padding: 0.875rem 1.25rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-subtle);
+        font-size: 0.875rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        width: fit-content;
+    }
+
+    .helper-text { font-size: 0.65rem; font-weight: 700; color: var(--text-tertiary); font-style: italic; }
+
+    /* Upload Facade Styles */
+    .upload-facade {
+        background: white;
+        border: 2px dashed var(--border-subtle);
+        border-radius: 20px;
+        padding: 3rem;
+        transition: all 0.3s;
+    }
+
+    .upload-facade.active { border-style: solid; padding: 2rem; }
+
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .upload-circle {
+        width: 64px;
+        height: 64px;
+        background: var(--bg-main);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-tertiary);
+    }
+
+    .empty-state h4 { font-size: 1rem; font-weight: 800; color: var(--text-primary); }
+    .empty-state p { font-size: 0.8125rem; font-weight: 600; color: var(--text-tertiary); }
+
+    .asset-display { display: flex; align-items: center; gap: 2.5rem; }
+    .preview-box {
+        padding: 1.5rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .preview-box img { height: 4rem; opacity: 0.8; }
+
+    .asset-info h5 { font-size: 1rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem; }
+    .asset-info p { font-size: 0.75rem; font-weight: 600; color: var(--text-tertiary); margin-bottom: 1rem; }
+
+    .text-btn {
+        background: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        cursor: pointer;
+        padding: 0;
+    }
+    .text-btn.danger { color: #ef4444; }
+
+    .auth-box {
+        background: #f8fafc;
+        border: 1px solid var(--border-subtle);
+        padding: 2rem;
+        border-radius: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .auth-info h4 { font-size: 1rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem; }
+    .auth-info p { font-size: 0.8125rem; font-weight: 600; color: var(--text-tertiary); max-width: 400px; }
 </style>

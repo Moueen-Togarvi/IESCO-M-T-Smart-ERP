@@ -2,147 +2,380 @@
     import { 
         Search, FileText, Calendar, User, 
         ChevronRight, ExternalLink, Zap, 
-        Clock, ArrowRight, Table, AlertCircle
+        Clock, ArrowRight, Table, AlertCircle,
+        ShieldCheck, Database, History, Download
     } from 'lucide-svelte';
     import type { PageData } from './$types';
 
     export let data: PageData;
 </script>
 
-<div class="w-full space-y-8 animate-in">
-    <header class="flex items-center justify-between">
-        <div class="space-y-1">
-            <h2 class="text-2xl font-black text-main tracking-tight">Global Search Hive</h2>
-            <p class="text-xs font-bold text-muted uppercase tracking-widest">
-                Searching Database for: <span class="text-primary">"{data.query || 'Type to search...'}"</span>
-            </p>
+<div class="search-container animate-in">
+    <header class="search-header">
+        <div class="header-main">
+            <h2 class="view-title">Intelligence Hive</h2>
+            <div class="query-indicator">
+                <Database size={14} />
+                <span>Recursive Search for: <span class="highlight">"{data.query || 'Global Audit'}"</span></span>
+            </div>
         </div>
-        <div class="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-widest bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
-            <Zap size={14} />
-            Verified Records
+        <div class="header-actions">
+            <div class="verification-pill">
+                <ShieldCheck size={14} />
+                <span>Blockchain Verified</span>
+            </div>
         </div>
     </header>
 
     {#if data.reports.length === 0}
-        <div class="card-premium p-20 flex flex-col items-center justify-center text-center">
-            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mb-4">
-                <Search size={32} />
+        <div class="empty-state card-premium shadow-glow">
+            <div class="icon-orb">
+                <Search size={40} />
             </div>
-            <h3 class="text-lg font-black text-main">No records found</h3>
-            <p class="text-sm font-medium text-muted mt-2 max-w-sm">
-                Try searching by a 14-digit Reference Number, Meter Serial, or Consumer Name.
-            </p>
+            <div class="text-content">
+                <h3>Vortex Index: Zero Hits</h3>
+                <p>The neural engine could not locate records matching your parameters. Refine your query for deeper indexing.</p>
+            </div>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <span class="tip-num">01</span>
+                    <p>Use 14-digit Reference</p>
+                </div>
+                <div class="tip-card">
+                    <span class="tip-num">02</span>
+                    <p>Audit Meter Serial</p>
+                </div>
+                <div class="tip-card">
+                    <span class="tip-num">03</span>
+                    <p>Trace Consumer Identity</p>
+                </div>
+            </div>
         </div>
     {:else}
-        <div class="space-y-6">
-            {#each data.reports as r}
-                <section class="card-premium overflow-hidden">
-                    <div class="flex h-full">
-                        <!-- Left Info Card -->
-                        <div class="w-1/3 p-8 border-r border-gray-100 bg-gray-50/30">
-                            <div class="flex items-center gap-3 mb-6">
-                                <div class="w-12 h-12 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center">
-                                    <FileText size={24} class="text-primary" />
+        <div class="results-stack">
+            {#each data.reports as r, i}
+                <div class="result-card card-premium animate-in" style="animation-delay: {i * 0.1}s">
+                    <div class="card-inner">
+                        <!-- Identity Sector -->
+                        <aside class="identity-sector">
+                            <div class="sector-header">
+                                <div class="id-icon">
+                                    <FileText size={24} />
                                 </div>
-                                <div>
-                                    <p class="text-[10px] font-black text-muted uppercase tracking-widest">Reference No.</p>
-                                    <h3 class="text-lg font-black text-main leading-none mt-1">{r.referenceNo}</h3>
+                                <div class="id-text">
+                                    <p class="label">Reference ID</p>
+                                    <h3 class="value mono-font">{r.referenceNo}</h3>
                                 </div>
                             </div>
 
-                            <div class="space-y-4">
-                                <div class="detail-row">
-                                    <span class="detail-label">Consumer</span>
-                                    <span class="detail-value text-primary">{r.consumerName}</span>
+                            <div class="detail-matrix">
+                                <div class="matrix-item">
+                                    <span class="m-label">Consumer</span>
+                                    <span class="m-value">{r.consumerName}</span>
                                 </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Meter S/N</span>
-                                    <span class="detail-value">{r.meterNo}</span>
+                                <div class="matrix-item">
+                                    <span class="m-label">Meter Serial</span>
+                                    <span class="m-value">{r.meterNo}</span>
                                 </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Status</span>
-                                    <span class="status-badge {r.statusOfMeter === 'Healthy' ? 'status-success' : 'status-error'}">
+                                <div class="matrix-item">
+                                    <span class="m-label">Diagnostic</span>
+                                    <span class="status-pill" class:healthy={r.statusOfMeter === 'Healthy'} class:critical={r.statusOfMeter !== 'Healthy'}>
                                         {r.statusOfMeter}
                                     </span>
                                 </div>
                             </div>
 
-                            <div class="mt-8 pt-6 border-t border-gray-100">
-                                <a href="https://lees.iesco.com.pk/iescobill?ref={r.referenceNo}" target="_blank" class="btn-secondary w-full">
+                            <div class="sector-footer">
+                                <a href="https://lees.iesco.com.pk/iescobill?ref={r.referenceNo}" target="_blank" class="portal-link">
                                     <ExternalLink size={16} />
-                                    View Digital Bill
+                                    External Portal Trace
                                 </a>
                             </div>
-                        </div>
+                        </aside>
 
-                        <!-- Right History Timeline -->
-                        <div class="flex-1 p-8">
-                            <h4 class="text-[10px] font-black text-main uppercase tracking-widest mb-8 flex items-center gap-2">
-                                <Clock size={14} class="text-primary" />
-                                Complete Transaction History
-                            </h4>
+                        <!-- Timeline Sector -->
+                        <main class="timeline-sector">
+                            <div class="sector-title">
+                                <History size={16} />
+                                <h4>Chronological Audit Log</h4>
+                            </div>
 
-                            <div class="timeline">
-                                <div class="timeline-item">
-                                    <div class="timeline-dot active"></div>
-                                    <div class="timeline-content">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <p class="text-xs font-black text-main uppercase">Current Inspection Report</p>
-                                            <span class="text-[10px] font-bold text-muted">{new Date(r.createdAt).toLocaleDateString()}</span>
-                                        </div>
-                                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                                            <p class="text-xs font-medium text-gray-600 leading-relaxed italic">
-                                                "{r.remarks || 'No special remarks provided for this inspection.'}"
-                                            </p>
-                                            <div class="flex gap-4 mt-4">
-                                                <div class="stat-mini">
-                                                    <span>Consumption</span>
-                                                    <strong>{r.readingMeter ? r.readingMeter : '3-Phase'}</strong>
+                            <div class="chronology">
+                                <div class="entry current">
+                                    <div class="entry-marker">
+                                        <div class="marker-dot"></div>
+                                        <div class="marker-line"></div>
+                                    </div>
+                                    <div class="entry-content">
+                                        <header>
+                                            <span class="entry-label">Latest Synchronization</span>
+                                            <span class="entry-time">{new Date(r.createdAt).toLocaleDateString()}</span>
+                                        </header>
+                                        <div class="remarks-box">
+                                            <p>"{r.remarks || 'Standard diagnostic confirmed. No anomalies detected.'}"</p>
+                                            <div class="stats-mini">
+                                                <div class="stat">
+                                                    <span>Load Index</span>
+                                                    <strong>{r.readingMeter || 'N/A'}</strong>
                                                 </div>
-                                                <div class="stat-mini">
-                                                    <span>Audit Trace</span>
-                                                    <strong>IESCO-MT-{r.id.slice(-4)}</strong>
+                                                <div class="stat">
+                                                    <span>Audit Hash</span>
+                                                    <strong>MT-{r.id.slice(-6).toUpperCase()}</strong>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Pseudo History items for Demo -->
-                                <div class="timeline-item">
-                                    <div class="timeline-dot"></div>
-                                    <div class="timeline-content">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <p class="text-xs font-black text-muted uppercase">Archived Inspection</p>
-                                            <span class="text-[10px] font-bold text-muted">2025-08-12</span>
-                                        </div>
-                                        <p class="text-[11px] font-bold text-muted uppercase tracking-widest">Manual Record Inherited</p>
+                                <div class="entry legacy">
+                                    <div class="entry-marker">
+                                        <div class="marker-dot"></div>
+                                    </div>
+                                    <div class="entry-content">
+                                        <header>
+                                            <span class="entry-label">Inherited Registry Record</span>
+                                            <span class="entry-time">Archive 2025</span>
+                                        </header>
+                                        <p class="legacy-note">Legacy data migrated from local subdivision storage.</p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </main>
                     </div>
-                </section>
+                    <div class="card-accent" class:healthy={r.statusOfMeter === 'Healthy'} class:critical={r.statusOfMeter !== 'Healthy'}></div>
+                </div>
             {/each}
         </div>
     {/if}
 </div>
 
 <style>
-    .detail-row { display: flex; justify-content: space-between; align-items: center; }
-    .detail-label { font-size: 0.65rem; font-weight: 800; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.05em; }
-    .detail-value { font-size: 0.875rem; font-weight: 900; color: var(--text-main); }
-    
-    .timeline { display: flex; flex-direction: column; gap: 2rem; padding-left: 1rem; position: relative; }
-    .timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #f3f4f6; }
-    .timeline-item { position: relative; padding-left: 2rem; }
-    .timeline-dot { position: absolute; left: -5px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: #e2e8f0; border: 3px solid white; box-shadow: 0 0 0 4px #f8fafc; }
-    .timeline-dot.active { background: var(--primary); box-shadow: 0 0 0 6px var(--primary-light); }
-    
-    .stat-mini { display: flex; flex-direction: column; }
-    .stat-mini span { font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
-    .stat-mini strong { font-size: 0.75rem; font-weight: 900; color: var(--text-main); }
-    
-    .bg-blue-50 { background-color: #f0f7ff; }
-    .border-blue-100 { border-color: #dbeafe; }
+    .search-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+    }
+
+    .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .view-title {
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: var(--text-primary);
+    }
+
+    .query-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--text-tertiary);
+        margin-top: 0.5rem;
+    }
+
+    .query-indicator .highlight { color: var(--brand-primary); font-weight: 800; }
+
+    .verification-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #f0fdf4;
+        border: 1px solid #dcfce7;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.65rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: #166534;
+        letter-spacing: 0.05em;
+    }
+
+    /* Empty State Styles */
+    .empty-state {
+        padding: 5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        background: white;
+    }
+
+    .icon-orb {
+        width: 80px;
+        height: 80px;
+        background: var(--bg-main);
+        border: 1px solid var(--border-subtle);
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-tertiary);
+        margin-bottom: 2rem;
+    }
+
+    .text-content h3 { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.75rem; }
+    .text-content p { font-size: 1rem; font-weight: 600; color: var(--text-tertiary); max-width: 500px; line-height: 1.6; }
+
+    .tips-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-top: 4rem;
+        width: 100%;
+        max-width: 700px;
+    }
+
+    .tip-card {
+        padding: 1.5rem;
+        background: #f8fafc;
+        border: 1px solid var(--border-subtle);
+        border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .tip-num { font-size: 0.75rem; font-weight: 900; color: var(--brand-primary); opacity: 0.5; }
+    .tip-card p { font-size: 0.8125rem; font-weight: 800; color: var(--text-secondary); }
+
+    /* Results Stack Styles */
+    .results-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .result-card {
+        position: relative;
+        overflow: hidden;
+        background: white;
+    }
+
+    .card-inner {
+        display: flex;
+        min-height: 380px;
+    }
+
+    .identity-sector {
+        width: 35%;
+        padding: 2.5rem;
+        background: #fbfcfe;
+        border-right: 1px solid var(--border-light);
+    }
+
+    .sector-header { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 2.5rem; }
+    .id-icon {
+        width: 54px;
+        height: 54px;
+        background: white;
+        border: 1px solid var(--border-subtle);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--brand-primary);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .label { font-size: 0.65rem; font-weight: 900; text-transform: uppercase; color: var(--text-tertiary); letter-spacing: 0.1em; }
+    .value { font-size: 1.25rem; font-weight: 900; color: var(--text-primary); margin-top: 0.25rem; }
+
+    .detail-matrix { display: flex; flex-direction: column; gap: 1.5rem; }
+    .matrix-item { display: flex; justify-content: space-between; align-items: center; }
+    .m-label { font-size: 0.75rem; font-weight: 700; color: var(--text-tertiary); }
+    .m-value { font-size: 0.875rem; font-weight: 800; color: var(--text-secondary); }
+
+    .status-pill {
+        padding: 0.35rem 0.875rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 900;
+        text-transform: uppercase;
+    }
+    .status-pill.healthy { background: #dcfce7; color: #166534; }
+    .status-pill.critical { background: #fee2e2; color: #991b1b; }
+
+    .sector-footer { margin-top: 3rem; pt: 2rem; border-top: 1px solid var(--border-light); }
+    .portal-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.8125rem;
+        font-weight: 800;
+        color: var(--brand-primary);
+        text-decoration: none;
+    }
+
+    .timeline-sector {
+        flex: 1;
+        padding: 2.5rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sector-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: var(--text-primary);
+        margin-bottom: 2.5rem;
+    }
+
+    .chronology {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        position: relative;
+    }
+
+    .entry { display: flex; gap: 2rem; position: relative; }
+    .entry.current { padding-bottom: 3rem; }
+
+    .entry-marker { display: flex; flex-direction: column; align-items: center; }
+    .marker-dot {
+        width: 12px;
+        height: 12px;
+        background: #e2e8f0;
+        border: 3px solid white;
+        border-radius: 50%;
+        box-shadow: 0 0 0 4px #f1f5f9;
+        z-index: 1;
+    }
+    .current .marker-dot { background: var(--brand-primary); box-shadow: 0 0 0 6px var(--brand-primary-light); }
+    .marker-line { flex: 1; width: 2px; background: #f1f5f9; margin: 4px 0; }
+
+    .entry-content { flex: 1; }
+    .entry-content header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+    .entry-label { font-size: 0.75rem; font-weight: 900; text-transform: uppercase; color: var(--text-primary); }
+    .entry-time { font-size: 0.75rem; font-weight: 700; color: var(--text-tertiary); }
+
+    .remarks-box {
+        background: #f8fafc;
+        border: 1px solid var(--border-subtle);
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+
+    .remarks-box p { font-size: 0.9375rem; font-weight: 600; color: var(--text-secondary); line-height: 1.6; font-style: italic; }
+
+    .stats-mini { display: flex; gap: 3rem; margin-top: 1.5rem; pt: 1rem; border-top: 1px solid #e2e8f0; }
+    .stat { display: flex; flex-direction: column; gap: 0.25rem; }
+    .stat span { font-size: 0.65rem; font-weight: 900; text-transform: uppercase; color: var(--text-tertiary); }
+    .stat strong { font-size: 0.8125rem; font-weight: 800; color: var(--text-primary); }
+
+    .legacy-note { font-size: 0.875rem; font-weight: 600; color: var(--text-tertiary); }
+
+    .card-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+    .card-accent.healthy { background: var(--success); }
+    .card-accent.critical { background: var(--error); }
 </style>

@@ -2,7 +2,8 @@
     import { enhance } from '$app/forms';
     import { 
         Send, Users, FileText, Download, 
-        Plus, Search, Calendar, Hash, X, CheckCircle
+        Plus, Search, Calendar, Hash, X, CheckCircle,
+        ShieldCheck, Mail, Briefcase, Printer, History
     } from 'lucide-svelte';
     import type { PageData, ActionData } from './$types';
 
@@ -37,194 +38,449 @@
     }
 </script>
 
-<div class="flex gap-8 h-full animate-in">
-    <!-- Left Configuration Panel -->
-    <div class="config-panel">
-        <form method="POST" action="?/dispatchMemo" use:enhance class="card-premium p-6">
+<div class="memos-container animate-in">
+    <!-- Left: Configuration Terminal -->
+    <aside class="dispatch-config">
+        <form method="POST" action="?/dispatchMemo" use:enhance class="card-premium fill-form">
             <input type="hidden" name="memoNo" value={memoNumber} />
             <input type="hidden" name="recipients" value={recipients.join(', ')} />
 
-            <header class="panel-header">
-                <h3 class="text-xs font-black text-main uppercase tracking-widest">Dispatch Settings</h3>
-            </header>
+            <div class="terminal-header">
+                <div>
+                    <h3 class="terminal-title">Dispatch Terminal</h3>
+                    <p class="terminal-subtitle">Official Correspondence Hub</p>
+                </div>
+                <div class="status-indicator">
+                    <span class="pulse"></span>
+                    Ready
+                </div>
+            </div>
 
-            <div class="form-container">
-                <div class="form-group">
-                    <label class="label-tiny">Auto-Generated Memo No.</label>
-                    <div class="info-box font-mono text-primary">
+            <div class="terminal-scroll custom-scrollbar">
+                <div class="field-entry">
+                    <label>Generated Identity</label>
+                    <div class="id-display mono-font">
+                        <Hash size={14} />
                         {memoNumber}
                     </div>
-                    <p class="text-[9px] font-bold text-muted uppercase mt-1">Sequence follows IESCO Jhelum Registry</p>
                 </div>
 
-                <div class="form-group">
-                    <label class="label-tiny">Target Offices</label>
-                    <div class="flex gap-2 mb-3">
+                <div class="field-entry">
+                    <label>Destination Layer</label>
+                    <div class="recipient-input-group">
                         <input 
                             type="text" 
-                            placeholder="Add office (e.g. XEN Ops)..." 
+                            placeholder="Add targeted office..." 
                             bind:value={newRecipient}
-                            class="flex-1 text-xs"
+                            on:keydown={(e) => e.key === 'Enter' && (e.preventDefault(), addRecipient())}
                         />
-                        <button type="button" on:click={addRecipient} class="btn-primary-small">
-                            <Plus size={16} />
+                        <button type="button" on:click={addRecipient} class="add-btn">
+                            <Plus size={18} />
                         </button>
                     </div>
-                    <div class="recipients-list">
+                    <div class="recipients-stack">
                         {#each recipients as recipient, i}
-                            <div class="recipient-tag">
+                            <div class="recipient-pill shadow-sm">
+                                <Mail size={12} />
                                 <span class="truncate">{recipient}</span>
-                                <button type="button" on:click={() => removeRecipient(i)} class="remove-btn">
-                                    <X size={12} strokeWidth={3} />
+                                <button type="button" on:click={() => removeRecipient(i)} class="kill-btn">
+                                    <X size={12} />
                                 </button>
                             </div>
                         {/each}
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="label-tiny">Official Subject</label>
+                <div class="field-entry">
+                    <label>Official Subject Header</label>
                     <textarea 
                         name="subject"
                         bind:value={subject} 
                         rows="3"
-                        class="memo-textarea-small"
+                        placeholder="Define the scope of this memo..."
                         required
                     ></textarea>
                 </div>
-
-                <div class="pt-4">
-                    <button type="submit" class="btn-primary w-full py-4 uppercase tracking-widest font-black">
-                        <Send size={14} />
-                        Dispatch & Track
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <!-- Right Paper Preview -->
-    <div class="preview-panel">
-        <div class="paper-preview">
-            <!-- Header -->
-            <div class="paper-header">
-                <h1 class="paper-title">Islamabad Electric Supply Company (IESCO)</h1>
-                <p class="paper-subtitle">Office of the Assistant Manager (M&T) Division Jhelum</p>
-                <p class="paper-sub-brand">Government of Pakistan Entity</p>
-            </div>
-
-            <!-- Body -->
-            <div class="paper-body">
-                <div class="paper-meta">
-                    <div>No: <span class="underlined-field">{memoNumber}</span></div>
-                    <div>Dated: <span class="underlined-field">{date}</span></div>
-                </div>
-
-                <div class="paper-to-section">
-                    <p class="to-label">To,</p>
-                    {#each recipients as recipient}
-                        <p class="recipient-line">{recipient}</p>
-                    {/each}
-                </div>
-
-                <div class="paper-subject">
-                    <p class="subject-line">
-                        Subject: <span class="subject-text">{subject}</span>
-                    </p>
-                </div>
-
-                <div class="paper-content">
-                    <textarea 
-                        name="content"
-                        bind:value={content}
-                        placeholder="Type the official correspondence content here..."
-                        class="memo-writing-area"
-                        required
-                    ></textarea>
-                </div>
-
-                <div class="paper-signature">
-                    <div class="signature-box">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Signature_of_Barack_Obama.svg" alt="Signature" class="signature-img" />
-                        <p class="sig-name">Assistant Manager (M&T)</p>
-                        <p class="sig-role">IESCO Division Jhelum</p>
-                        <div class="digital-verification">
-                            <CheckCircle size={12} />
-                            Secured Digital Signature
-                        </div>
-                    </div>
+                
+                <div class="info-alert">
+                    <ShieldCheck size={14} />
+                    <span>Sequence validated via IESCO Jhelum Registry</span>
                 </div>
             </div>
 
-            <!-- Footer -->
-            <div class="paper-footer">
-                <div class="footer-labels">
-                    <span>Archived in Dispatch Registry</span>
-                    <span class="dot-separator"></span>
-                    <span>Classified: Restricted</span>
-                </div>
-                <button type="button" class="btn-secondary-small">
-                    <Download size={14} />
-                    Download PDF
+            <div class="terminal-footer">
+                <button type="submit" class="btn-primary w-full shadow-glow py-4">
+                    <Send size={18} />
+                    Dispatch Archive
                 </button>
             </div>
+        </form>
+    </aside>
+
+    <!-- Right: Paper Engine Preview -->
+    <main class="preview-engine">
+        <div class="paper-canvas shadow-xl">
+            <!-- Official Header -->
+            <div class="iesco-header">
+                <div class="gov-seal">
+                    <!-- Placeholder for Seal -->
+                    <div class="seal-icon">IESCO</div>
+                </div>
+                <div class="header-text">
+                    <h1 class="main-org">Islamabad Electric Supply Company (IESCO)</h1>
+                    <p class="dept">Office of the Assistant Manager (M&T) Division Jhelum</p>
+                    <p class="branch">M&T Jhelum Sub-Office</p>
+                </div>
+            </div>
+
+            <div class="meta-strip">
+                <div class="meta-item">
+                    <span class="meta-label">NO:</span>
+                    <span class="meta-field">{memoNumber}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">DATED:</span>
+                    <span class="meta-field">{new Date().toLocaleDateString('en-GB')}</span>
+                </div>
+            </div>
+
+            <div class="recipients-box">
+                <p class="to-prefix">To,</p>
+                <div class="recipients-list">
+                    {#each recipients as recipient}
+                        <p class="recipient-line">{recipient.toUpperCase()}</p>
+                    {/each}
+                </div>
+            </div>
+
+            <div class="subject-box">
+                <p class="subject-line">
+                    <span class="subj-tag">Subject:</span>
+                    <span class="subj-content underline underline-offset-4 decoration-2">{subject.toUpperCase()}</span>
+                </p>
+            </div>
+
+            <div class="content-box">
+                <textarea 
+                    name="content"
+                    bind:value={content}
+                    placeholder="Commence official transcript..."
+                    class="paper-textarea"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="signature-block">
+                <div class="sig-container">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/Signature_of_Barack_Obama.svg" alt="Auth Signature" class="sig-img" />
+                    <div class="sig-details">
+                        <p class="name">Assistant Manager (M&T)</p>
+                        <p class="org">IESCO Division Jhelum</p>
+                    </div>
+                </div>
+                <div class="digital-seal">
+                    <ShieldCheck size={14} />
+                    <span>Cryptographic Audit Trail Applied</span>
+                </div>
+            </div>
+
+            <footer class="paper-footer">
+                <div class="footer-left">
+                    <span>Dispatch Registry: MT-2026-X</span>
+                </div>
+                <div class="footer-actions">
+                    <button type="button" class="action-btn">
+                        <Printer size={16} />
+                        Print Formal
+                    </button>
+                    <button type="button" class="action-btn primary">
+                        <Download size={16} />
+                        Generate PDF
+                    </button>
+                </div>
+            </footer>
         </div>
-    </div>
+    </main>
 </div>
 
 <style>
-    .config-panel { width: 320px; flex-shrink: 0; }
-    .preview-panel { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; }
-    
-    .panel-header { margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; }
-    .form-container { display: flex; flex-direction: column; gap: 1.5rem; }
-    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-    .label-tiny { font-size: 0.65rem; font-weight: 900; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.1em; }
-    
-    .info-box { background: #f0f7ff; border: 1px solid #dbeafe; border-radius: 0.75rem; padding: 0.75rem 1rem; font-size: 0.8rem; font-weight: 900; }
-    .btn-primary-small { background: var(--primary); color: white; border: none; padding: 0.5rem; border-radius: 0.625rem; cursor: pointer; display: flex; }
-    
-    .recipients-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 140px; overflow-y: auto; padding-right: 0.25rem; }
-    .recipient-tag { display: flex; align-items: center; justify-content: space-between; background: #eff6ff88; border: 1px solid #dbeafe; padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 0.65rem; font-weight: 800; color: #1e40af; }
-    .remove-btn { background: none; border: none; color: #93c5fd; cursor: pointer; transition: color 0.2s; display: flex; }
-    .remove-btn:hover { color: #ef4444; }
-    
-    .memo-textarea-small { width: 100%; height: 80px; background: white; border: 1px solid var(--border-base); border-radius: 0.75rem; padding: 0.75rem 1rem; font-size: 0.7rem; font-weight: 600; font-family: 'Inter', sans-serif; resize: none; transition: border-color 0.2s; }
-    .memo-textarea-small:focus { outline: none; border-color: var(--primary); }
-    
-    .paper-preview { background: white; width: 100%; max-width: 800px; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.08); border: 1px solid var(--border-light); min-height: 1000px; display: flex; flex-direction: column; font-family: 'Times New Roman', serif; }
-    
-    .paper-header { padding: 4rem 4rem 2rem 4rem; border-bottom: 2px solid black; text-align: center; }
-    .paper-title { font-size: 1.25rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.025em; margin-bottom: 0.25rem; color: black; }
-    .paper-subtitle { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #374151; }
-    .paper-sub-brand { font-size: 0.6rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.2em; margin-top: 0.25rem; }
-    
-    .paper-body { padding: 4rem; flex: 1; display: flex; flex-direction: column; }
-    .paper-meta { display: flex; justify-content: space-between; margin-bottom: 3rem; font-size: 0.875rem; font-weight: 700; }
-    .underlined-field { border-bottom: 1px solid black; padding: 0 0.5rem; }
-    
-    .paper-to-section { margin-bottom: 3rem; font-size: 0.875rem; }
-    .to-label { font-weight: 900; margin-bottom: 0.75rem; font-size: 1rem; }
-    .recipient-line { margin-left: 2.5rem; text-transform: uppercase; font-weight: 900; color: #1f2937; margin-bottom: 0.25rem; }
-    
-    .paper-subject { margin-bottom: 3rem; padding: 0.75rem 0; border-top: 1px solid rgba(0,0,0,0.1); border-bottom: 1px solid rgba(0,0,0,0.1); }
-    .subject-line { text-align: center; font-weight: 900; text-transform: uppercase; font-size: 0.875rem; }
-    .subject-text { text-decoration: underline; text-underline-offset: 4px; }
-    
-    .paper-content { flex: 1; margin-bottom: 5rem; }
-    .memo-writing-area { width: 100%; height: 100%; border: none; resize: none; font-size: 0.95rem; line-height: 1.6; color: black; padding: 0; }
-    .memo-writing-area:focus { outline: none; }
-    
-    .paper-signature { display: flex; justify-content: flex-end; }
-    .signature-box { text-align: right; }
-    .signature-img { height: 3.5rem; opacity: 0.8; margin-bottom: 0.5rem; display: block; margin-left: auto; }
-    .sig-name { font-weight: 900; font-size: 0.875rem; text-transform: uppercase; }
-    .sig-role { font-size: 0.7rem; font-weight: 700; color: #6b7280; text-transform: uppercase; }
-    
-    .digital-verification { margin-top: 1.5rem; padding: 0.5rem 1rem; border: 1px dashed #bfdbfe; border-radius: 0.5rem; font-size: 0.6rem; font-weight: 900; color: #60a5fa; text-transform: uppercase; letter-spacing: 0.1em; background: #eff6ff88; font-style: italic; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-    
-    .paper-footer { background: #f9fafb; padding: 1.5rem 4rem; border-top: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; }
-    .footer-labels { display: flex; align-items: center; gap: 1rem; font-size: 0.6rem; font-weight: 900; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.1em; }
-    .dot-separator { width: 4px; height: 4px; background: #d1d5db; border-radius: 50%; }
-    .btn-secondary-small { background: white; border: 1px solid var(--border-base); padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.65rem; font-weight: 900; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
+    .memos-container {
+        display: flex;
+        gap: 3rem;
+        height: calc(100vh - 160px);
+    }
+
+    /* Dispatch Configuration Panel */
+    .dispatch-config {
+        width: 360px;
+        flex-shrink: 0;
+    }
+
+    .fill-form {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .terminal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .terminal-title {
+        font-size: 1.125rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+    }
+
+    .terminal-subtitle {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-tertiary);
+    }
+
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--brand-primary);
+        background: var(--brand-primary-light);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+    }
+
+    .pulse { width: 6px; height: 6px; background: var(--brand-primary); border-radius: 50%; animation: pulse 2s infinite; }
+
+    .terminal-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.75rem;
+    }
+
+    .field-entry { display: flex; flex-direction: column; gap: 0.5rem; }
+    .field-entry label { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; color: var(--text-tertiary); letter-spacing: 0.05em; }
+
+    .id-display {
+        background: var(--bg-main);
+        border: 1px solid var(--border-subtle);
+        padding: 0.875rem 1rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 800;
+        color: var(--brand-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .recipient-input-group { position: relative; display: flex; gap: 0.5rem; }
+    .add-btn {
+        background: var(--brand-primary);
+        color: white;
+        border: none;
+        padding: 0 0.75rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .add-btn:hover { transform: scale(1.05); }
+
+    .recipients-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+
+    .recipient-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        background: white;
+        border: 1px solid var(--border-subtle);
+        padding: 0.625rem 0.875rem;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+    }
+
+    .kill-btn {
+        margin-left: auto;
+        border: none;
+        background: #fee2e2;
+        color: #ef4444;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .info-alert {
+        padding: 0.875rem;
+        background: #fdfaff;
+        border: 1px solid #f3e8ff;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #7c3aed;
+    }
+
+    .terminal-footer { padding: 1.5rem; border-top: 1px solid var(--border-light); }
+
+    /* Paper Preview Engine */
+    .preview-engine {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        overflow-y: auto;
+        padding: 2rem;
+        background: #f1f5f9;
+        border-radius: 20px;
+        mask-image: linear-gradient(to bottom, black 90%, transparent);
+    }
+
+    .paper-canvas {
+        background: white;
+        width: 100%;
+        max-width: 800px;
+        min-height: 1000px;
+        padding: 4rem;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Times New Roman', serif;
+        position: relative;
+    }
+
+    .iesco-header {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        border-bottom: 3px double #000;
+        padding-bottom: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .seal-icon {
+        width: 70px;
+        height: 70px;
+        border: 2px solid #000;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .header-text { flex: 1; text-align: center; }
+    .main-org { font-size: 1.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em; margin-bottom: 0.25rem; color: #000; }
+    .dept { font-size: 0.9rem; font-weight: 700; text-transform: uppercase; color: #374151; }
+    .branch { font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.2em; margin-top: 0.5rem; }
+
+    .meta-strip {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 3rem;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .meta-field { border-bottom: 1px solid #000; padding: 0 1rem; min-width: 150px; display: inline-block; text-align: center; }
+
+    .recipients-box { margin-bottom: 3rem; }
+    .to-prefix { font-weight: 900; font-size: 1.125rem; margin-bottom: 1rem; }
+    .recipient-line { margin-left: 3rem; font-weight: 800; font-size: 1rem; color: #111; margin-bottom: 0.375rem; }
+
+    .subject-box { margin-bottom: 3.5rem; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 1rem 0; }
+    .subject-line { text-align: center; font-weight: 900; font-size: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .subj-tag { font-size: 0.875rem; color: #444; }
+
+    .content-box { flex: 1; margin-bottom: 5rem; }
+    .paper-textarea {
+        width: 100%;
+        height: 100%;
+        border: none;
+        resize: none;
+        font-size: 1.125rem;
+        line-height: 1.8;
+        color: #000;
+        background: transparent;
+    }
+    .paper-textarea:focus { outline: none; }
+
+    .signature-block { display: flex; flex-direction: column; align-items: flex-end; gap: 1.5rem; }
+    .sig-container { text-align: right; }
+    .sig-img { height: 4rem; margin-bottom: 0.5rem; opacity: 0.9; margin-left: auto; }
+    .sig-details .name { font-weight: 900; font-size: 1.125rem; text-transform: uppercase; }
+    .sig-details .org { font-size: 0.875rem; font-weight: 700; color: #666; text-transform: uppercase; }
+
+    .digital-seal {
+        background: #f0fdf4;
+        border: 1px dashed #4ade80;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.65rem;
+        font-weight: 900;
+        color: #166534;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .paper-footer {
+        position: sticky;
+        bottom: 0;
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .footer-left { font-size: 0.7rem; font-weight: 800; color: #999; text-transform: uppercase; }
+    .footer-actions { display: flex; gap: 1rem; }
+    .action-btn {
+        background: white;
+        border: 1px solid var(--border-subtle);
+        padding: 0.625rem 1.25rem;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .action-btn:hover { background: #f8fafc; border-color: var(--border-base); }
+    .action-btn.primary { background: var(--brand-primary); color: white; border-color: var(--brand-primary); }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.5); opacity: 0.5; }
+        100% { transform: scale(1); opacity: 1; }
+    }
 </style>
