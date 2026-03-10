@@ -885,4 +885,35 @@
 
     .spin-icon { animation: spin 2s linear infinite; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* Responsive Queries */
+    @media (max-width: 1024px) {
+        .reports-container {
+            flex-direction: column;
+            height: auto;
+        }
+        .entry-console {
+            width: 100%;
+        }
+        .row-flex {
+            flex-direction: column;
+        }
+        .view-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .filter-strip {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .search-box {
+            max-width: 100%;
+            width: 100%;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+    }
 </style>

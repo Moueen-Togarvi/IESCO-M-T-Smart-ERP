@@ -223,7 +223,7 @@
     /* Stats Grid */
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: 1.5rem;
     }
 
@@ -568,5 +568,66 @@
         background: white;
         color: var(--brand-primary);
         border-color: var(--brand-primary);
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 1200px) {
+        .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 1024px) {
+        .analytics-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            /* 2 cards per row as requested */
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .header-actions {
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .stats-card {
+            padding: 1rem;
+            gap: 0.75rem;
+        }
+        
+        .card-main .value {
+            font-size: 1.25rem;
+        }
+
+        .chart-card, .activity-card {
+            padding: 1rem;
+        }
+
+        .card-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .v-separator { display: none; }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            /* Still enforcing 2 cards per row but tighter */
+            gap: 0.75rem;
+        }
+        
+        .card-main .label { font-size: 0.65rem; }
+        .trend-badge { display: none; }
     }
 </style>

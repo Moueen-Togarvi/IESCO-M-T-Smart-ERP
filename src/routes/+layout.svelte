@@ -2,7 +2,7 @@
     import '../app.css';
     import { 
         LayoutDashboard, FileText, Settings, History, 
-        LogOut, Search, Bell, HelpCircle, User, Shield, Zap
+        LogOut, Search, Bell, HelpCircle, User, Shield, Zap, Menu, X
     } from 'lucide-svelte';
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
@@ -19,17 +19,27 @@
     
     let userRole = 'Super Administrator';
     let searchQuery = "";
+    let sidebarOpen = false;
 
     const handleSearch = (e: KeyboardEvent) => {
         if (e.key === 'Enter' && searchQuery) {
             goto(`/search?q=${encodeURIComponent(searchQuery)}`);
         }
     };
+    
+    $: if ($page.url.pathname) {
+        sidebarOpen = false;
+    }
 </script>
 
 <div class="app-layout">
+    <!-- Mobile Overlay -->
+    {#if sidebarOpen}
+        <div class="mobile-overlay" on:click={() => sidebarOpen = false}></div>
+    {/if}
+
     <!-- Premium Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar {sidebarOpen ? 'open' : ''}">
         <div class="sidebar-header">
             <div class="logo-container">
                 <div class="logo-badge">
@@ -79,7 +89,11 @@
     <div class="content-container">
         <!-- Premium Top Bar -->
         <header class="top-bar">
-            <div class="search-bar">
+            <div class="flex items-center gap-3">
+                <button class="mobile-menu-btn" on:click={() => sidebarOpen = true}>
+                    <Menu size={24} />
+                </button>
+                <div class="search-bar">
                 <Search size={16} class="search-icon" />
                 <input 
                     type="text" 
@@ -94,13 +108,13 @@
                     <Bell size={18} />
                     <span class="ping-dot"></span>
                 </button>
-                <div class="v-divider"></div>
-                <div class="system-status">
+                <div class="v-divider hidden-mobile"></div>
+                <div class="system-status hidden-mobile">
                     <div class="status-dot"></div>
                     <span>System Live</span>
                 </div>
-                <div class="v-divider"></div>
-                <button class="help-btn">
+                <div class="v-divider hidden-mobile"></div>
+                <button class="help-btn hidden-mobile">
                     <HelpCircle size={18} />
                 </button>
             </div>
@@ -390,5 +404,57 @@
     .page-container {
         max-width: 1400px;
         margin: 0 auto;
+    }
+
+    .mobile-menu-btn {
+        display: none;
+        background: transparent;
+        border: none;
+        color: var(--text-primary);
+        cursor: pointer;
+        padding: 0.5rem;
+        margin-left: -0.5rem;
+    }
+
+    .mobile-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(4px);
+        z-index: 45;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1024px) {
+        .sidebar {
+            position: fixed;
+            left: -280px;
+            top: 0;
+            bottom: 0;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar.open {
+            left: 0;
+        }
+
+        .mobile-menu-btn {
+            display: block;
+        }
+
+        .search-bar { width: 200px; }
+    }
+
+    @media (max-width: 768px) {
+        .top-bar {
+            padding: 0 1rem;
+            height: 60px;
+        }
+        
+        .search-bar { display: none; }
+        
+        .page-viewport {
+            padding: 1rem;
+        }
     }
 </style>

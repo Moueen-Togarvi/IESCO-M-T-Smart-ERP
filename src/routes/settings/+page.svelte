@@ -422,4 +422,19 @@
 
     .auth-info h4 { font-size: 1rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem; }
     .auth-info p { font-size: 0.8125rem; font-weight: 600; color: var(--text-tertiary); max-width: 400px; }
+
+    /* Responsive Queries */
+    @media (max-width: 1024px) {
+        .settings-grid { grid-template-columns: 1fr; }
+        .settings-sidebar { position: static; gap: 1rem; display: grid; grid-template-columns: 1fr 1fr; }
+        .nav-footer { border-top: none; padding-top: 0; margin-top: 0; grid-column: span 2; }
+    }
+    @media (max-width: 768px) {
+        .settings-sidebar { grid-template-columns: 1fr; }
+        .nav-footer { grid-column: span 1; }
+        .settings-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+        .input-grid { grid-template-columns: 1fr; }
+        .asset-display { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+        .auth-box { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+    }
 </style>

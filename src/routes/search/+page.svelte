@@ -378,4 +378,12 @@
     .card-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
     .card-accent.healthy { background: var(--success); }
     .card-accent.critical { background: var(--error); }
+
+    /* Responsive Queries */
+    @media (max-width: 1024px) {
+        .card-inner { flex-direction: column; }
+        .identity-sector { width: 100%; border-right: none; border-bottom: 1px solid var(--border-light); }
+        .search-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+        .tips-grid { grid-template-columns: 1fr; }
+    }
 </style>

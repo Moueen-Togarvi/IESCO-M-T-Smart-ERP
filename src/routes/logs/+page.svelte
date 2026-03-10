@@ -404,4 +404,25 @@
         70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
         100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
     }
+
+    /* Responsive Queries */
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .filter-bar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .search-field { max-width: 100%; width: 100%; }
+        .table-viewport { overflow-x: auto; }
+        .table-pagination {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+    }
 </style>

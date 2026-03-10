@@ -483,4 +483,30 @@
         50% { transform: scale(1.5); opacity: 0.5; }
         100% { transform: scale(1); opacity: 1; }
     }
+
+    /* Responsive Queries */
+    @media (max-width: 1024px) {
+        .memos-container {
+            flex-direction: column;
+            height: auto;
+        }
+        .dispatch-config {
+            width: 100%;
+        }
+        .paper-canvas {
+            padding: 2rem;
+        }
+    }
+    @media (max-width: 768px) {
+        .paper-footer {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+        .footer-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+        .action-btn { width: 100%; justify-content: center; }
+    }
 </style>
